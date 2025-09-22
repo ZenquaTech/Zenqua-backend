@@ -114,8 +114,7 @@ exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
 
     // Step 1: Check if any product is using this category
-    const productUsingCategory = await Product.findOne({ category: id });
-
+    const productUsingCategory = await Product.findOne({ category: id.toString(), isDeleted: false });
     if (productUsingCategory) {
       return res.status(400).json({
         result: false,
@@ -125,8 +124,10 @@ exports.deleteCategory = async (req, res) => {
 
     // Step 2: Attempt to delete the category
     const deletedCategory = await Category.findByIdAndDelete(id);
+     console.log("🟢 Deleted category result:", deletedCategory);
 
     if (!deletedCategory) {
+      
       return res.status(404).json({
         result: false,
         message: "Category not found",
